@@ -26,7 +26,7 @@
 
 | # | 路径 | 动作 | 作用 |
 |---|---|---|---|
-| 1 | `AGENTS.md` | 追加 5 行 | 派单前加载 `delegate` skill 的指针 |
+| 1 | `AGENTS.md` | 追加 delegate 指针 | 派单前加载 `delegate` skill 的指针（带标记，可精确移除） |
 | 2 | `opencode.json` | 追加 5 条权限 | 授权门与高危命令拦截 |
 | 3 | `agents/scout.md` | 新建 | 只读侦察 |
 | 4 | `agents/worker.md` | 新建 | 受控实现 |
@@ -37,9 +37,9 @@
 | 9 | `commands/review.md` | 新建 | `/review` 快捷入口 |
 | 10 | `skills/delegate/SKILL.md` | 新建 | 派单协议本体 |
 
-项目级副本（可选，用于绕开命令懒加载）：`.opencode/commands/{scout,review}.md`
+项目级副本（可选，用于绕开命令懒加载）：把 `config/commands/*.md` 复制到项目的 `.opencode/commands/`。
 
-> **`opencode.json` 含真实 apiKey，已在 `.gitignore` 中排除，永不入库。** 权限改动需人工核对，见 §5。
+> **`opencode.json` 可能含真实凭据，已在 `.gitignore` 中排除，永不入库。** 权限改动需人工核对，见 §5。
 
 ### 版本控制
 

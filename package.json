@@ -1,0 +1,62 @@
+{
+  "name": "opencode-lite-subagent",
+  "version": "1.0.0",
+  "description": "Lightweight sub-agent suite for OpenCode V2: five roles, a delegation skill, two commands, and safe defaults.",
+  "type": "module",
+  "license": "MIT",
+  "author": "chz777123",
+  "homepage": "https://github.com/chz777123/opencode-lite-subagent",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chz777123/opencode-lite-subagent.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chz777123/opencode-lite-subagent/issues"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "subagent",
+    "agents",
+    "delegation",
+    "openchamber"
+  ],
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "config",
+    "docs",
+    "openchamber",
+    "install.sh",
+    "icon.svg",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "node scripts/build-assets.mjs",
+    "check": "node --check src/index.js",
+    "dry-run": "bash install.sh --dry-run"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@opencode/plugin": "^2.2.5"
+  },
+  "openchamber": {
+    "apiVersion": 1,
+    "engines": {
+      "openchamber": ">=1.22.0"
+    },
+    "contributes": {
+      "panel": {
+        "id": "opencode-lite-subagent",
+        "name": "Lite Subagent",
+        "icon": "icon.svg",
+        "entry": "openchamber/panel/index.html"
+      }
+    }
+  }
+}

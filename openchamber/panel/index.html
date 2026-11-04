@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Lite Subagent</title>
+<style>
+  :root {
+    --bg: #f6f8fa;
+    --fg: #1f2328;
+    --muted: #656d76;
+    --card: #ffffff;
+    --border: #d0d7de;
+    --code-bg: #f6f8fa;
+    --accent: #4ea1ff;
+    --accent-soft: rgba(78, 161, 255, 0.12);
+    --danger: #cf222e;
+    --danger-soft: rgba(207, 34, 46, 0.1);
+    --warn: #9a6700;
+    --warn-soft: rgba(154, 103, 0, 0.12);
+    --ok: #1a7f37;
+    --ok-soft: rgba(26, 127, 55, 0.12);
+    --radius: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117;
+      --fg: #e6edf3;
+      --muted: #8b949e;
+      --card: #161b22;
+      --border: #30363d;
+      --code-bg: #0d1117;
+      --accent: #58a6ff;
+      --accent-soft: rgba(88, 166, 255, 0.14);
+      --danger: #ff7b72;
+      --danger-soft: rgba(255, 123, 114, 0.12);
+      --warn: #d29922;
+      --warn-soft: rgba(210, 153, 34, 0.14);
+      --ok: #3fb950;
+      --ok-soft: rgba(63, 185, 80, 0.14);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font: 14px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+      "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    padding: 16px;
+  }
+  main { max-width: 720px; margin: 0 auto; }
+  .hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .brand { display: flex; gap: 12px; align-items: center; min-width: 0; }
+  .brand svg { width: 44px; height: 44px; flex: 0 0 auto; border-radius: 12px; }
+  h1 { margin: 0; font-size: 18px; line-height: 1.25; letter-spacing: -0.01em; }
+  .tagline { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+  .version {
+    flex: 0 0 auto;
+    font: 11px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 5px 8px;
+    background: var(--card);
+  }
+  .callout {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: var(--accent-soft);
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    margin-bottom: 18px;
+    font-size: 12.5px;
+  }
+  .callout strong { color: var(--accent); }
+  .callout svg { width: 16px; height: 16px; flex: 0 0 auto; margin-top: 2px; color: var(--accent); }
+  section { margin-bottom: 20px; }
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  h2::after {
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: var(--border);
+  }
+  .muted { color: var(--muted); font-size: 12px; }
+  .cmd-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px;
+    margin-top: 8px;
+  }
+  .cmd-card .cmd-body { min-width: 0; flex: 1; }
+  .cmd-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  .cmd-label .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  pre {
+    margin: 0;
+    padding: 8px 10px;
+    overflow-x: auto;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font: 11.5px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: pre;
+  }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  button {
+    flex: 0 0 auto;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--fg);
+    border-radius: 8px;
+    padding: 6px 9px;
+    font-size: 11.5px;
+    cursor: pointer;
+    transition: background 120ms ease, border-color 120ms ease;
+  }
+  button:hover { border-color: var(--accent); }
+  button.done { color: var(--ok); border-color: var(--ok); background: var(--ok-soft); }
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--card);
+  }
+  table { width: 100%; min-width: 540px; border-collapse: collapse; font-size: 12px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 11px; color: var(--muted); font-weight: 600; background: var(--bg); }
+  tr:last-child td { border-bottom: 0; }
+  td code { font-size: 11px; }
+  .pill {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    line-height: 1.6;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .pill.deny { color: var(--danger); background: var(--danger-soft); border-color: color-mix(in srgb, var(--danger) 35%, transparent); }
+  .pill.ask { color: var(--warn); background: var(--warn-soft); border-color: color-mix(in srgb, var(--warn) 35%, transparent); }
+  .steps { margin: 0; padding: 0; list-style: none; counter-reset: step; }
+  .steps li {
+    position: relative;
+    padding: 0 0 10px 30px;
+    font-size: 12.5px;
+    counter-increment: step;
+  }
+  .steps li:last-child { padding-bottom: 0; }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font: 600 10.5px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  .steps li strong { font-weight: 600; }
+  .rules { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+  .rules li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card);
+    font-size: 11.5px;
+  }
+  .rules code { color: var(--muted); }
+  footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 11.5px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  @media (max-width: 420px) {
+    body { padding: 12px; }
+    .cmd-card { flex-wrap: wrap; }
+    .cmd-card button { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header class="hero">
+    <div class="brand">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true">
+        <defs>
+          <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#4ea1ff"/>
+            <stop offset="1" stop-color="#7c3aed"/>
+          </linearGradient>
+        </defs>
+        <rect width="64" height="64" rx="15" fill="url(#bg)"/>
+        <path d="M14 21l8 11-8 11" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M27 32h7" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+        <circle cx="38" cy="32" r="4.5" fill="#fff"/>
+        <path d="M42 29.5l6-8M42.5 32h6M42 34.5l6 8" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".85"/>
+        <circle cx="52" cy="18" r="3.5" fill="#fff"/>
+        <circle cx="52" cy="32" r="3.5" fill="#fff"/>
+        <circle cx="52" cy="46" r="3.5" fill="#fff"/>
+      </svg>
+      <div>
+        <h1>Lite Subagent</h1>
+        <p class="tagline">5 个角色 · 1 份派单协议 · 零自建运行时</p>
+      </div>
+    </div>
+    <span class="version">v1.0.0</span>
+  </header>
+
+  <div class="callout">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/>
+    </svg>
+    <div>
+      <strong>这个面板只提供说明与命令复制。</strong>
+      OpenChamber 扩展只能增加 UI，不能安装 agent；真正的安装请在终端运行下面的命令。
+    </div>
+  </div>
+
+  <section>
+    <h2>安装（二选一）</h2>
+    <p class="muted">不要同时使用两种方式：它们会提供同名的命令与 skill。</p>
+
+    <div class="cmd-card">
+      <div class="cmd-body">
+        <div class="cmd-label"><span class="dot"></span>OpenCode 插件</div>
+        <pre><code id="cmd-plugin">opencode plugin add github:chz777123/opencode-lite-subagent</code></pre>
+      </div>
+      <button type="button" data-copy="cmd-plugin">复制</button>
+    </div>
+
+    <div class="cmd-card">
+      <div class="cmd-body">
+        <div class="cmd-label"><span class="dot"></span>curl 安装器</div>
+        <pre><code id="cmd-curl">curl -fsSL https://raw.githubusercontent.com/chz777123/opencode-lite-subagent/main/install.sh | bash</code></pre>
+      </div>
+      <button type="button" data-copy="cmd-curl">复制</button>
+    </div>
+
+    <p class="muted" style="margin-top:8px">
+      插件会把 5 个 agent 写到 <code>~/.config/opencode/agents/</code>，并用 transform 注册命令与 skill；
+      全局权限和 <code>AGENTS.md</code> 指针需要手动添加，或改用 curl 安装器。
+    </p>
+  </section>
+
+  <section>
+    <h2>五个角色</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>角色</th><th>何时用</th><th>写权限</th><th>回执终态</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>scout</code></td><td>位置未知、跨 ≥3 文件</td><td>无</td><td><code>located / partial / not-found</code></td></tr>
+          <tr><td><code>worker</code></td><td>跨 ≥3 文件或 ≥30 行，需求已收敛</td><td><code>scope.write</code> 内</td><td><code>done / partial / blocked</code></td></tr>
+          <tr><td><code>reviewer</code></td><td>公共 API / 迁移 / 鉴权 / 并发</td><td>无（可跑测试）</td><td><code>ship / fix-first / block</code></td></tr>
+          <tr><td><code>oracle</code></td><td>方案代价高、方向没底</td><td>无</td><td><code>proceed / change-course / stop</code></td></tr>
+          <tr><td><code>evidence-auditor</code></td><td>结论依赖外部资料</td><td>无（web 只读）</td><td><code>pass / fail</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>协议</h2>
+    <ol class="steps">
+      <li><strong>门控</strong>：任务复杂不是授权。用户明确要求、敲 <code>/scout</code> 或 <code>/review</code>，才算授权。</li>
+      <li><strong>TaskCard</strong>：<code>goal</code> / <code>scope</code> / <code>non_goals</code> / <code>acceptance</code>；禁止粘贴聊天历史或 diff 原文。</li>
+      <li><strong>派单</strong>：只读角色 ≤3 并行；<code>worker</code> 同工作区同时只允许 1 个。</li>
+      <li><strong>宿主验收</strong>：父 agent 亲自复跑 <code>acceptance</code>、看 <code>git status</code>、精读 diff、抽查一条 <code>path:line</code>。</li>
+      <li><strong>续接</strong>：第 1 次修复用原 <code>sessionID</code>；第 2 次仍不过就停下，按脏净状态回滚或交人。</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>5 条全局权限</h2>
+    <ul class="rules">
+      <li><code>subagent *</code><span class="pill ask">ask</span></li>
+      <li><code>shell git push *</code><span class="pill deny">deny</span></li>
+      <li><code>shell git clean *</code><span class="pill deny">deny</span></li>
+      <li><code>shell git reset --hard *</code><span class="pill ask">ask</span></li>
+      <li><code>shell rm -rf *</code><span class="pill deny">deny</span></li>
+    </ul>
+    <p class="muted" style="margin-top:8px">
+      <code>subagent: ask</code> 是授权门。首次批准某个角色时选 <strong>always</strong>，OpenCode 会按 agent ID 落一条持久 allow。
+    </p>
+  </section>
+
+  <footer>
+    <span><code>config/</code> 是唯一事实来源 · MIT License</span>
+    <span>
+      <a href="https://github.com/chz777123/opencode-lite-subagent" target="_blank" rel="noreferrer">GitHub</a>
+      ·
+      <a href="https://github.com/chz777123/opencode-lite-subagent/blob/main/docs/DEVELOPMENT.md" target="_blank" rel="noreferrer">设计文档</a>
+    </span>
+  </footer>
+</main>
+
+<script>
+  for (const button of document.querySelectorAll("[data-copy]")) {
+    button.addEventListener("click", async () => {
+      const target = document.getElementById(button.dataset.copy);
+      const text = target.textContent.trim();
+      let copied = false;
+
+      try {
+        await navigator.clipboard.writeText(text);
+        copied = true;
+      } catch {
+        const range = document.createRange();
+        range.selectNodeContents(target);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        try {
+          copied = document.execCommand("copy");
+        } catch {
+          copied = false;
+        }
+      }
+
+      const original = button.textContent;
+      button.textContent = copied ? "已复制" : "已选中";
+      button.classList.add("done");
+      setTimeout(() => {
+        button.textContent = original;
+        button.classList.remove("done");
+      }, 1400);
+    });
+  }
+</script>
+</body>
+</html>
