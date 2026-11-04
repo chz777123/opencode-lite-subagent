@@ -34,11 +34,6 @@
     "README.md",
     "LICENSE"
   ],
-  "scripts": {
-    "build": "node scripts/build-assets.mjs",
-    "check": "node --check src/index.js",
-    "dry-run": "bash install.sh --dry-run"
-  },
   "engines": {
     "node": ">=20"
   },
